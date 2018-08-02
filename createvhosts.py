@@ -10,7 +10,15 @@ from xml.dom import minidom
 import sys
 sys.path.append('/scripts/')
 import xmlapi
+import json
 
+def check_json_output():
+    with open('/usr/local/cpanel/version', 'r') as cp_version_file:
+        cp_version = cp_version_file.read(5)
+        cp_version_file.close()
+
+    # cPanel & WHM version 66 deprecated XML output for cPanel API 1, cPanel API 2, UAPI, WHM API 0, and WHM API 1.
+    return cp_version >= "11.66"
 
 def wildcard_safe(domain):
         return domain.replace('*', '_wildcard_')
@@ -38,7 +46,7 @@ def writeconfded(user, domain, docroot, passedip, alias):
           add_header X-Cache "HIT from Backend";
           proxy_pass http://%s:8081;
           include proxy.inc;
-	  include microcache.inc;          
+	  include microcache.inc;
 	  }
           location @backend {
           internal;
@@ -115,9 +123,18 @@ def writeconfshared(user,domain,docroot,passedip, alias):
 
 def getmainip():
         ipDOC = xmlapi.api("listips")
-        parsedipDOC = minidom.parseString(ipDOC)
-        iptaglist = parsedipDOC.getElementsByTagName('ip')
-        serverip = iptaglist[0].childNodes[0].toxml()
+
+        if check_json_output():
+            parsedipDOC = json.loads(ipDOC)
+            result = parsedipDOC['result'][0]
+
+            if 'ip' in result.keys():
+                serverip = result['ip']
+        else:
+            parsedipDOC = minidom.parseString(ipDOC)
+            iptaglist = parsedipDOC.getElementsByTagName('ip')
+            serverip = iptaglist[0].childNodes[0].toxml()
+
         return serverip
 
 def getipliststring():
