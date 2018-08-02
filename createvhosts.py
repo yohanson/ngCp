@@ -139,19 +139,28 @@ def getmainip():
 
 def getipliststring():
         ipDOC = xmlapi.api("listips")
-        parsedipDOC = minidom.parseString(ipDOC)
-        iptaglist = parsedipDOC.getElementsByTagName('ip')
         iplist =[]
 
-        q = 0
-        while q < len(iptaglist):
-                iplist.append(str(iptaglist[q].childNodes[0].toxml()))
-                q = q + 1
+        if check_json_output():
+            parsedipDOC = json.loads(ipDOC)
+            result = parsedipDOC['result']
+
+            for record in result:
+                if 'ip' in record.keys():
+                    iplist.append(record['ip'])
+        else:
+            parsedipDOC = minidom.parseString(ipDOC)
+            iptaglist = parsedipDOC.getElementsByTagName('ip')
+
+            q = 0
+            while q < len(iptaglist):
+                    iplist.append(str(iptaglist[q].childNodes[0].toxml()))
+                    q = q + 1
+
+
         ipliststring = ' '.join(iplist)
 
         return ipliststring
-
-
 
 def getvars(ydomain):
         DOC = xmlapi.api("domainuserdata?domain=" + ydomain)
