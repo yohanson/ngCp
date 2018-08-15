@@ -28,22 +28,19 @@ import sys
 sys.path.append('/scripts')
 import createvhosts
 import yaml
+import json
 
 dedip = argdict['useip']
 newuser = argdict['user']
 
  
 ipDOC = xmlapi.api("listips")
-parsedipDOC = minidom.parseString(ipDOC)
-iptaglist = parsedipDOC.getElementsByTagName('ip')
-iplist =[]
+parsedipDOC = json.loads(ipDOC)
+ips = parsedipDOC.get('result')
+iplist = []
 
-q = 0
-while q < len(iptaglist):
-        iplist.append(str(iptaglist[q].childNodes[0].toxml()))
-        q = q + 1
-
-
+for ip in ips:
+    iplist.append(ip.get('ip'))
 
 f = open('/var/cpanel/userdata/' + newuser + '/main')
 ydata = yaml.load(f)
@@ -61,5 +58,4 @@ else:
 
 proc = subprocess.Popen("/etc/init.d/nginx restart > /dev/null 2>&1", shell=True)
 output = proc.communicate()
-
 
