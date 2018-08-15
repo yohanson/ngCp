@@ -26,9 +26,8 @@ def wildcard_safe(domain):
     return domain.replace('*', '_wildcard_')
 
 def writeconfded(user, domain, docroot, passedip, alias):
-    user = user
-    domain = domain
-    passedip = passedip
+    if docroot == None:
+        return
     dedipvhost = u"""server {
           error_log /var/log/nginx/vhost-error_log warn;
 
@@ -85,6 +84,8 @@ def writeconfded(user, domain, docroot, passedip, alias):
         domainvhost.close()
 
 def writeconfshared(user,domain,docroot,passedip, alias):
+    if docroot == None:
+        return
     sharedipvhost = u"""server {
 
           error_log /var/log/nginx/vhost-error_log warn;
@@ -190,10 +191,10 @@ def getvars(ydomain):
         if check_json_output():
             parsedDOC = json.loads(DOC)
             if parsedDOC['result'][0]['status'] == 1 and parsedDOC['result'][0]['statusmsg'] == 'Obtained userdata.':
-                user_data = parsedDOC['userdata']
-                docroot = user_data['documentroot']
-                yip = domain_ip = user_data['ip']
-                serveralias = user_data['serveralias']
+                user_data = parsedDOC.get('userdata')
+                docroot = user_data.get('documentroot')
+                yip = domain_ip = user_data.get('ip')
+                serveralias = user_data.get('serveralias')
 
                 if serveralias is list:
                     aliaslist = []
