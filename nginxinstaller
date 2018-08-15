@@ -185,7 +185,7 @@ output = proc.communicate()
 proc = subprocess.Popen("chmod +x /usr/local/cpanel/hooks/park/park > /dev/null 2>&1", shell=True)
 output = proc.communicate()
 
-proc = subprocess.Popen("cp /" + currentdir + "/unpark /usr/local/cpanel/hooks/park > /dev/null 2>&1", shell=True)
+proc = subprocess.Popen("cp /" + currentdir + "/park /usr/local/cpanel/hooks/park/unpark > /dev/null 2>&1", shell=True)
 output = proc.communicate()
 proc = subprocess.Popen("chmod +x /usr/local/cpanel/hooks/park/unpark > /dev/null 2>&1", shell=True)
 output = proc.communicate()

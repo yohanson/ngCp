@@ -14,7 +14,7 @@ sys.path.append('/scripts/')
 import xmlapi
 from xml.dom import minidom
 
-def check_json_output():
+def xml_deprecated():
     with open('/usr/local/cpanel/version', 'r') as cp_version_file:
         cp_version = cp_version_file.read(5)
         cp_version_file.close()
@@ -147,7 +147,7 @@ def writeconfshared(user,domain,docroot,passedip, alias):
 def getmainip():
         ipDOC = xmlapi.api("listips")
 
-        if check_json_output():
+        if xml_deprecated():
             parsedipDOC = json.loads(ipDOC)
             result = parsedipDOC['result'][0]
 
@@ -164,7 +164,7 @@ def getipliststring():
         ipDOC = xmlapi.api("listips")
         iplist =[]
 
-        if check_json_output():
+        if xml_deprecated():
             parsedipDOC = json.loads(ipDOC)
             result = parsedipDOC['result']
 
@@ -188,7 +188,7 @@ def getipliststring():
 def getvars(ydomain):
         DOC = xmlapi.api('domainuserdata?domain=' + ydomain)
 
-        if check_json_output():
+        if xml_deprecated():
             parsedDOC = json.loads(DOC)
             if parsedDOC['result'][0]['status'] == 1 and parsedDOC['result'][0]['statusmsg'] == 'Obtained userdata.':
                 user_data = parsedDOC.get('userdata')
@@ -239,7 +239,7 @@ def getvars(ydomain):
 
 if __name__ == '__main__':
         DOC = xmlapi.api("listaccts")
-        if check_json_output():
+        if xml_deprecated():
             parsedDOC = json.loads(DOC)
 
             if parsedDOC['statusmsg'] == 'Ok' and parsedDOC['status'] == 1:
