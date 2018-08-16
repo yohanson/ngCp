@@ -15,9 +15,7 @@ import xmlapi
 from xml.dom import minidom
 
 def xml_deprecated():
-    with open('/usr/local/cpanel/version', 'r') as cp_version_file:
-        cp_version = cp_version_file.read(5)
-        cp_version_file.close()
+    cp_version = xmlapi.get_cpanel_version()
 
     # cPanel & WHM version 66 deprecated XML output for cPanel API 1, cPanel API 2, UAPI, WHM API 0, and WHM API 1.
     return cp_version >= "11.66"

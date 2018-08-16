@@ -6,13 +6,28 @@ from urlparse import urlparse
 import os
 import getopt
 
+def get_cpanel_version():
+    with open('/usr/local/cpanel/version', 'r') as cp_version_file:
+        cp_version = cp_version_file.read(5)
+        cp_version_file.close()
+        return cp_version
+
+def get_api_token():
+    if os.path.exists('/root/.ngcp_api_token'):
+        with open('/root/.ngcp_api_token', 'r') as ngcp_api_token_file:
+            ngcp_api_token = ngcp_api_token_file.read().replace('\n', '')
+            ngcp_api_token_file.close()
+
+            if not ngcp_api_token:
+                raise Exception('ngcp_api_token API Token is empty. Please fill with "username:token"')
+            else:
+                return ngcp_api_token
+    else:
+        raise Exception('ngcp_api_token API Token file does not exist. Please fill with "username:token"')
+
 def api(arg):
 
-
- 	with open('/usr/local/cpanel/version', 'r') as cp_version_file:
-	 	cp_version = cp_version_file.read(5)
-		cp_version_file.close()
-
+        cp_version = get_cpanel_version()
 	# cPanel & WHM version 66 deprecated XML output for cPanel API 1, cPanel API 2, UAPI, WHM API 0, and WHM API 1.
 	if cp_version >= "11.66":
 		theurl = 'http://127.0.0.1:2086/json-api/' + arg
@@ -20,21 +35,7 @@ def api(arg):
 		theurl = 'http://127.0.0.1:2086/xml-api/' + arg
 
 	if cp_version >= "11.68":
-		if os.path.exists('/root/.ngcp_api_token'):
-			with open('/root/.ngcp_api_token', 'r') as ngcp_api_token_file:
-			 	ngcp_api_token = ngcp_api_token_file.read().replace('\n', '')
-				ngcp_api_token_file.close()
-
-				if not ngcp_api_token:
-					print 'ngcp_api_token API Token is empty. Please fill with "username:token"'
-					sys.exit(1)
-				else:
-					(ngcp_user_api, ngcp_token_api)  = ngcp_api_token.split(':')
-
-					auth = 'whm ' + ngcp_user_api + ':' + ngcp_token_api
-		else:
-			print 'ngcp_api_token API Token file does not exist. Please fill with "username:token"'
-			sys.exit(1)
+                auth = 'whm ' + get_api_token()
 	else:
 		if os.path.exists('/root/.accesshash'):
 			hash = open("/root/.accesshash", 'r')
@@ -52,7 +53,7 @@ def api(arg):
 	try:
 		handle = urllib2.urlopen(req)
 	except IOError, e:
-		print 'Error: ' + e
+		print 'Error: ', e
 		print "The Access key found but It looks like logins not working, Please regenerate it in WHM."
 		sys.exit(1)
 
