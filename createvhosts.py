@@ -29,7 +29,7 @@ def writeconfded(user, domain, docroot, passedip, alias):
     user = user
     domain = domain
     passedip = passedip
-    dedipvhost = """server {
+    dedipvhost = u"""server {
           error_log /var/log/nginx/vhost-error_log warn;
 
           listen %s:80;
@@ -81,11 +81,11 @@ def writeconfded(user, domain, docroot, passedip, alias):
         pass
     else:
         domainvhost = open ('/etc/nginx/vhosts/' + domain, 'w')
-        domainvhost.write( dedipvhost )
+        domainvhost.write( dedipvhost.encode('utf-8') )
         domainvhost.close()
 
 def writeconfshared(user,domain,docroot,passedip, alias):
-    sharedipvhost = """server {
+    sharedipvhost = u"""server {
 
           error_log /var/log/nginx/vhost-error_log warn;
 
@@ -140,7 +140,7 @@ def writeconfshared(user,domain,docroot,passedip, alias):
         pass
     else:
         domainvhost = open ('/etc/nginx/vhosts/' + domain, 'w')
-        domainvhost.write( sharedipvhost )
+        domainvhost.write( sharedipvhost.encode('utf-8') )
         domainvhost.close()
 
 def getmainip():
