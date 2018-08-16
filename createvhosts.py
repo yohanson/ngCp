@@ -81,7 +81,7 @@ def writeconfded(user, domain, docroot, passedip, alias):
         pass
     else:
         domainvhost = open ('/etc/nginx/vhosts/' + domain, 'w')
-        domainvhost.writelines( dedipvhost )
+        domainvhost.write( dedipvhost )
         domainvhost.close()
 
 def writeconfshared(user,domain,docroot,passedip, alias):
@@ -140,7 +140,7 @@ def writeconfshared(user,domain,docroot,passedip, alias):
         pass
     else:
         domainvhost = open ('/etc/nginx/vhosts/' + domain, 'w')
-        domainvhost.writelines( sharedipvhost )
+        domainvhost.write( sharedipvhost )
         domainvhost.close()
 
 def getmainip():
